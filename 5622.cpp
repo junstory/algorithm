@@ -9,6 +9,7 @@ int main() {
 	cin >> c;
 	for(int i=0;i<strlen(c);i++){
 		p = c[i];
+		//아스키코드를 이용하여 time에 더함. 
 		if(p>64&&p<68){
 			time +=3;
 		}
@@ -38,6 +39,7 @@ int main() {
 		}
 	}
 	
+	//결과 출력 
 	cout << time << endl;
 	
 	return 0;
