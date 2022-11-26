@@ -30,7 +30,7 @@ int main(void){
 			}
 		}
 	}
-	//소수의 개수 출력 
+	//소수의 개수 출력  
 	cout << count;
 	return 0;
 }
