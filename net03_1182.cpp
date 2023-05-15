@@ -4,11 +4,13 @@ using namespace std;
 int a[20];
 int N, S;
 
-int count = 0;
+int N_count = 0;
 
 void dfs(int idx, int s) {
 	if (idx == N)return;
-	if (s + a[idx] == S) count++;
+	if (s + a[idx] == S) {
+		N_count++; return;
+	}
 	dfs(idx + 1, s);
 	dfs(idx + 1, s + a[idx]);
 }
@@ -32,6 +34,6 @@ int main() {
 	}
 
 	dfs(0, 0);
-	cout << count;
+	cout << N_count;
 	return 0;
 }
