@@ -1,6 +1,4 @@
 from math import factorial
-def a(o,tw,th):
-    li = [3]*th + [2]*tw + [1]*o
     
 for _ in range(int(input())):
     n = int(input())
