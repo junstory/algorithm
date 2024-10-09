@@ -1,16 +1,16 @@
 #동전0
 n, k = map(int, input().split())
-coin = [0]*1000001
+coin = []
 for i in range(n):
     cash = int(input())
-    coin[cash] += 1
+    coin.append(cash)
+coin.sort(reverse=True)
 count = 0
-while k > 0:
-    for i in range(len(coin)-1,0,-1):
-        if coin[i] > 0 and k - i > 0:
-            coin[i] -= 1
-            k -= i
-            count += 1
+for i in coin:
+    if k//i > 0:
+        count += k//i
+        k %= i
+        if k<= 0:
             break
 
 print(count)
