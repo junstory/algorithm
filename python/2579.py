@@ -6,7 +6,7 @@
 # dp[i] = max(dp[i-3] + arr[i-1] + arr[i], dp[i-2] + arr[i])
 # 가능한 경우는 1. i-3번째 + 연속으로 이전(i-1), 나(i) i-2는 건너뜀.
 # 2. i-2번째 + 나(i) i-2는 연속으로 왔든 띄엄띄엄왔든 모름. 상관없음. 왜? i-2를 계산할 당시에 최댓값을 추구해서 구한거니까.
-
+n = int(input())
 stairs = [0] * 301
 for i in range(1, n + 1):
     stairs[i] = int(input())
