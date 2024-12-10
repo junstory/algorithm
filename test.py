@@ -1,31 +1,46 @@
-import numpy as np
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return abs(a)
 
-# 8x8 배열 생성
-array = np.array(
-    [[4.5, 6.5, 6.5, 6.5, 5.5, 4.5, 3.5, 2.5],
-    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-    [0.5,0.5, 7.5,14.5,22.5,23.5,24.5,16.5],
-    [0.5,0.5, 7.5,14.5,22.5,23.5,24.5,16.5],
-    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-    [-3.5,-5.5,-12.5,-19.5,-26.5,-26.5,-26.5,-17.5]]
-)  # 랜덤 값으로 8x8 배열 생성
+def generate_extreme_points(x1, y1, x2, y2):
+    # 선분의 시작점과 끝점을 제외한 가장 양끝 점만 반환
+    dx, dy = x2 - x1, y2 - y1
+    g = gcd(dx, dy)
+    dx //= g
+    dy //= g
+    return [(x1 + dx, y1 + dy), (x2 - dx, y2 - dy)]
 
-# 평균 풀링 함수 정의
-def average_pooling(arr, kernel_size=3, stride=1):
-    output_dim = ((arr.shape[0] - kernel_size) // stride + 1, 
-                  (arr.shape[1] - kernel_size) // stride + 1)
-    pooled_array = np.zeros(output_dim)
+def triangle_area(x1, y1, x2, y2, x3, y3):
+    return abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
 
-    for i in range(0, arr.shape[0] - kernel_size + 1, stride):
-        for j in range(0, arr.shape[1] - kernel_size + 1, stride):
-            window = arr[i:i+kernel_size, j:j+kernel_size]
-            pooled_array[i // stride, j // stride] = round(np.mean(window),2    )
+def solve_triangle():
+    data = list(map(int, input().split()))
+    x1, y1, x2, y2, x3, y3 = data
 
-    return pooled_array
+    # 각 변에서 가장 멀리 떨어진 점 계산
+    ab_points = generate_extreme_points(x1, y1, x2, y2)
+    bc_points = generate_extreme_points(x2, y2, x3, y3)
+    ca_points = generate_extreme_points(x3, y3, x1, y1)
 
-# 평균 풀링 적용
-pooled_array = average_pooling(array)
-print("Original Array:\n", array)
-print("\nPooled Array:\n", pooled_array)
+    max_area = 0
+    min_area = float('inf')
+    found = False
+    print(len(ab_points), len(bc_points), len(ca_points))
+    # 최대 8개의 조합만 확인
+    for px1, py1 in ab_points:
+        for px2, py2 in bc_points:
+            for px3, py3 in ca_points:
+                area = triangle_area(px1, py1, px2, py2, px3, py3)
+                if area > 0:  # 유효한 삼각형
+                    found = True
+                    max_area = max(max_area, area)
+                    min_area = min(min_area, area)
+
+    if not found:
+        print(-1)
+    else:
+        print(max_area, min_area)
+
+print("풀이 시작")
+solve_triangle()
