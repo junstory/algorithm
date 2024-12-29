@@ -32,3 +32,59 @@
 
  <p>한 줄에 배낭에 넣을 수 있는 물건들의 가치합의 최댓값을 출력한다.</p>
 
+
+
+
+
+ ###노트
+
+ DP를 사용한다면, 무게를 하나씩 넣어보면서 최대가 되는 값들을 업데이트시키자.
+ 처음으로 넣는 아이템에 따라 달라질 수 있으니까 모든 n에 대해 돌린다.
+
+
+
+ ```
+ n, k = map(int, input().split())
+items= []
+
+for i in range(n):
+    w, v = map(int, input().split())
+    items.append((w, v))
+
+items.sort()
+
+dp = [0] * (k+1)
+for i in range(n):
+    for j in range(k, items[i][0]-1, -1):
+        dp[j] = max(dp[j], dp[j-items[i][0]] + items[i][1])
+print(dp[k])
+ ```
+
+
+```
+from collections import deque
+
+n = int(input())
+ret = []
+for i in range(n):
+    ret.append(int(input()))
+
+ans = []
+q = deque([])
+for i in range(1, n+1):
+    q.appendleft(i)
+    temp = q.popleft()
+    if temp == ret[0]:
+        while len(ret) != 0 and temp == ret[0]:
+            ans.append('-')
+            ret.pop(0)
+            if len(q) != 0:
+                temp = q.popleft()
+        q.appendleft(temp)
+    else:
+        q.appendleft(temp)
+        ans.append('+')
+print(ret)
+print(ans)
+print(q)
+```
