@@ -1,22 +1,21 @@
 import heapq
+import sys
 
+input = sys.stdin.readline
 
-def solution(heap, n):
-    count = 0
-    if n == 1:
-       return 0
-    while len(heap) > 1:
-         a = heapq.heappop(heap)
-         b = heapq.heappop(heap)
-         #print(a, b)
-         count += a + b
-         heapq.heappush(heap, a+b)
-    return count
-
-heap = []
 n = int(input())
-for i in range(n):
-    heapq.heappush(heap, int(input()))
+heap = []
 
-answer = solution(heap, n)
-print(answer)
+for i in range(n):
+    num = int(input())
+    heap.append(num)
+
+heapq.heapify(heap)
+count = 0
+while len(heap) > 1:
+    num1 = heapq.heappop(heap)
+    num2 = heapq.heappop(heap)
+    heapq.heappush(heap, num1 + num2)
+    count += num1 + num2
+    
+print(count)
