@@ -1,96 +1,94 @@
 #include <iostream>
-#include <algorithm>
 #include <string>
 using namespace std;
 
-bool B_Abs(string a, string b) {
-    if (a.length() != b.length()) return a.length() > b.length();
-    for (size_t i = 0; i < a.length(); ++i) {
-        if (a[i] != b[i]) return a[i] > b[i];
-    }
-    return false;
+// 앞자리 0 제거
+string TrimLeadingZeros(const string& s) {
+    size_t idx = 0;
+    while (idx < s.size() - 1 && s[idx] == '0') idx++;
+    return s.substr(idx);
 }
-string B_Add(string a, string b) {
-    if (a.length() < b.length()) swap(a, b);
-    reverse(a.begin(), a.end());
-    reverse(b.begin(), b.end());
-    string result = "";
-    int up = 0;
-    for (size_t i = 0; i < a.length(); i++) {
-        int A_a = a[i] - '0';
-        int A_b = (i < b.length() ? b[i] - '0' : 0);
-        int sum = A_a + A_b + up;
-        result += (sum % 10) + '0';
-        up = sum / 10;
+
+// 절댓값 기준으로 a > b인지 판단
+bool B_Abs(const string& a, const string& b) {
+    string sa = TrimLeadingZeros(a);
+    string sb = TrimLeadingZeros(b);
+    if (sa.length() != sb.length()) return sa.length() > sb.length();
+    return sa > sb;
+}
+
+// 문자열 덧셈: a + b (양수 전용)
+string B_Add(const string& a, const string& b) {
+    string result;
+    int carry = 0;
+    int i = (int)a.size() - 1, j = (int)b.size() - 1;
+
+    while (i >= 0 || j >= 0 || carry) {
+        int da = (i >= 0) ? a[i--] - '0' : 0;
+        int db = (j >= 0) ? b[j--] - '0' : 0;
+        int sum = da + db + carry;
+        result.insert(result.begin(), (sum % 10) + '0');
+        carry = sum / 10;
     }
-    if (up) {
-        result += up + '0';
-    }
-    reverse(result.begin(), result.end());
     return result;
 }
 
-string B_Subtract(string a, string b) {
-    reverse(a.begin(), a.end());
-    reverse(b.begin(), b.end());
-    string result = "";
-    int down = 0;
-    for (size_t i = 0; i < a.length(); i++) {
-        int S_a = a[i] - '0' - down;
-        int S_b = (i < b.length() ? b[i] - '0' : 0);
-        if (S_a < S_b) {
-            S_a += 10;
-            down = 1;
+// 문자열 뺄셈: a - b (a >= b 가정)
+string B_Subtract(const string& a, const string& b) {
+    string result;
+    int borrow = 0;
+    int i = (int)a.size() - 1, j = (int)b.size() - 1;
+
+    while (i >= 0) {
+        int da = a[i--] - '0' - borrow;
+        int db = (j >= 0) ? b[j--] - '0' : 0;
+        if (da < db) {
+            da += 10;
+            borrow = 1;
         } else {
-            down = 0;
+            borrow = 0;
         }
-        result += (S_a - S_b) + '0';
+        result.insert(result.begin(), (da - db) + '0');
     }
-    while (result.length() > 1 && result.back() == '0') {
-        result.pop_back();
-    }
-    reverse(result.begin(), result.end());
-    return result;
+
+    return TrimLeadingZeros(result);
 }
 
+// 덧셈 또는 뺄셈 연산 처리 (부호 포함)
 string B_Oper(string a, string b) {
-    bool ma = false;
-    bool mb = false;
+    bool ma = false, mb = false;
     if (a[0] == '-') {
-        a = a.substr(1);
         ma = true;
+        a = a.substr(1);
     }
     if (b[0] == '-') {
-        b = b.substr(1);
         mb = true;
+        b = b.substr(1);
     }
-    if (ma == mb) {
-        string result = B_Add(a, b);
-        if (ma) {
-            result = '-' + result;
-        }
-        return result;
-    } 
-    if (B_Abs(a, b)) {
-        string result = B_Subtract(a, b);
-        if (ma) {
-            result = '-' + result;
-        }
-        return result;
-    } else {
-        string result = B_Subtract(b, a);
-        if (mb) {
-            result = '-' + result;
-        }
-        return result;
-    }
-    
-}
 
+    string result;
+
+    if (ma == mb) {
+        result = B_Add(a, b);
+        if (ma) result = '-' + result;
+    } else {
+        if (B_Abs(a, b)) {
+            result = B_Subtract(a, b);
+            if (ma) result = '-' + result;
+        } else {
+            result = B_Subtract(b, a);
+            if (mb) result = '-' + result;
+        }
+    }
+
+    result = TrimLeadingZeros(result);
+    if (result == "0" || result == "-0") return "0";
+    return result;
+}
 
 int main() {
     string ina, inb;
     cin >> ina >> inb;
-    string result = B_Oper(ina, inb);
-    cout << result;
+    cout << B_Oper(ina, inb) << endl;
+    return 0;
 }
